@@ -5,6 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.atguigu.edu.realtime.util.EnvUtil;
 import com.atguigu.edu.realtime.util.KafkaUtil;
 
+import com.ververica.cdc.connectors.mysql.source.MySqlSource;
+import com.ververica.cdc.connectors.mysql.source.MySqlSourceBuilder;
+import com.ververica.cdc.connectors.mysql.table.StartupOptions;
+import com.ververica.cdc.debezium.JsonDebeziumDeserializationSchema;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -40,11 +44,27 @@ public class DimSinkApp {
                 }
             }
         });
-        jsonDS.print();
+        //jsonDS.print();
+
+        //使用flinkCDC读取配置表数据
+        MySqlSource<String> mySqlSource = MySqlSource.<String>builder()
+                .hostname("192.168.12.122")
+                .port(3306)
+                .username("root")
+                .password("000000")
+                .databaseList("edu_config")
+                .tableList("edu_config.table_process")
+                //定义读取数据的格式
+                .deserializer(new JsonDebeziumDeserializationSchema())
+                //设置读取数据的模式
+                .startupOptions(StartupOptions.initial())
+                .build();
 
 
+        DataStreamSource<String> configDS = env.fromSource(mySqlSource,
+                WatermarkStrategy.noWatermarks(),"mysql_source");
 
-
+        configDS.print();
 
         env.execute();
 
