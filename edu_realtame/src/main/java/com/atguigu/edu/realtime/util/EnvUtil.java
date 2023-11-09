@@ -28,7 +28,7 @@ public class EnvUtil {
                 3, Time.days(1), Time.minutes(1)
         ));
         env.setStateBackend(new HashMapStateBackend());
-        env.getCheckpointConfig().setCheckpointStorage("hdfs://hadoop122:8020/edu/ck");
+        env.getCheckpointConfig().setCheckpointStorage("hdfs://192.168.12.122:8020/edu/ck");
         System.setProperty("HADOOP_USER_NAME", "atguigu");
         return env;
 
