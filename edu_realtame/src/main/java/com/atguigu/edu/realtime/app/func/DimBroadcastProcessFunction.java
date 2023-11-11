@@ -21,7 +21,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
 
 
     // 定义 Druid 连接池对象
-    DruidDataSource druidDataSource;
+    DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
 
     private MapStateDescriptor<String, DimTableProcess> tableProcessState;
 
@@ -35,7 +35,6 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
-        druidDataSource = DruidDSUtil.getDruidDataSource();
 
         // 预加载配置信息
         Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.12.122:3306/edu_config?" +
