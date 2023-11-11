@@ -10,13 +10,13 @@ public class DruidTest {
 
 
     @Test
-    public void test1(){
+    public void test1() throws SQLException {
         DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
-        try {
-            DruidPooledConnection connection = druidDataSource.getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.out.println("连接池获取连接异常");
-        }
+
+        DruidPooledConnection connection = druidDataSource.getConnection();
+
+        System.out.println(connection);
     }
-}
+
+    }
+
