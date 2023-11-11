@@ -71,7 +71,7 @@ public class DimSinkApp {
         DataStreamSource<String> configDS = env.fromSource(mySqlSource,
                 WatermarkStrategy.noWatermarks(),"mysql_source");
 
-        //configDS.print();
+        configDS.print();
 
         //5.将配置表数据创建为广播流
 
@@ -85,12 +85,13 @@ public class DimSinkApp {
 
 
         //对合并后的流进行分别处理
-        SingleOutputStreamOperator<JSONObject> dimDS = connectCS.process(
+        //SingleOutputStreamOperator<JSONObject> dimDS =
+                connectCS.process(
                 new DimBroadcastProcessFunction(tableProcessState));
 
         //将数据写入phoenix
 
-        dimDS.addSink(new DimPhoenixSinkFunc());
+        //dimDS.addSink(new DimPhoenixSinkFunc());
 
 
 

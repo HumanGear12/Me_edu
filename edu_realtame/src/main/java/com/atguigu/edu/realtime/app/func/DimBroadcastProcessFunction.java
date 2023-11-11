@@ -21,7 +21,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
 
 
     // 定义 Druid 连接池对象
-    DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
+    DruidDataSource druidDataSource;
 
     private MapStateDescriptor<String, DimTableProcess> tableProcessState;
 
@@ -36,6 +36,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
 
+        druidDataSource = DruidDSUtil.getDruidDataSource();
         // 预加载配置信息
         Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.12.122:3306/edu_config?" +
                 "user=root&password=000000&useUnicode=true&" +
@@ -62,6 +63,35 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
         conn.close();
 
     }
+
+
+    @Override
+    public void processBroadcastElement(String jsonStr, Context context, Collector<JSONObject> out) throws Exception {
+
+        JSONObject jsonObj = JSON.parseObject(jsonStr);
+        BroadcastState<String, DimTableProcess> tableConfigState = context.getBroadcastState(tableProcessState);
+        String op = jsonObj.getString("op");
+        if ("d".equals(op)) {
+            DimTableProcess before = jsonObj.getObject("before", DimTableProcess.class);
+            String sourceTable = before.getSourceTable();
+            tableConfigState.remove(sourceTable);
+            // 同时删除预加载 Map 中的配置信息
+            configMap.remove(sourceTable);
+        } else {
+            DimTableProcess config = jsonObj.getObject("after", DimTableProcess.class);
+            tableConfigState.put(config.getSourceTable(), config);
+
+            String sinkTable = config.getSinkTable();
+            String sinkColumns = config.getSinkColumns();
+            String sinkPk = config.getSinkPk();
+            String sinkExtend = config.getSinkExtend();
+
+            checkTable(sinkTable, sinkColumns, sinkPk, sinkExtend);
+        }
+
+
+    }
+
 
     @Override
     public void processElement(JSONObject jsonObj, BroadcastProcessFunction<JSONObject, String, JSONObject>.ReadOnlyContext readOnlyContext, Collector<JSONObject> collector) throws Exception {
@@ -102,32 +132,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
 
 
 
-    @Override
-    public void processBroadcastElement(String jsonStr, Context context, Collector<JSONObject> out) throws Exception {
 
-        JSONObject jsonObj = JSON.parseObject(jsonStr);
-        BroadcastState<String, DimTableProcess> tableConfigState = context.getBroadcastState(tableProcessState);
-        String op = jsonObj.getString("op");
-        if ("d".equals(op)) {
-            DimTableProcess before = jsonObj.getObject("before", DimTableProcess.class);
-            String sourceTable = before.getSourceTable();
-            tableConfigState.remove(sourceTable);
-            // 同时删除预加载 Map 中的配置信息
-            configMap.remove(sourceTable);
-        } else {
-            DimTableProcess config = jsonObj.getObject("after", DimTableProcess.class);
-            tableConfigState.put(config.getSourceTable(), config);
-
-            String sinkTable = config.getSinkTable();
-            String sinkColumns = config.getSinkColumns();
-            String sinkPk = config.getSinkPk();
-            String sinkExtend = config.getSinkExtend();
-
-            checkTable(sinkTable, sinkColumns, sinkPk, sinkExtend);
-        }
-
-
-    }
 
 
     private void checkTable(String sinkTable, String sinkColumns, String sinkPk, String sinkExtend) {
