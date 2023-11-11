@@ -13,13 +13,15 @@ import java.util.Set;
 
 
 public class PhoenixUtil {
-    private static DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
+    //private static DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
 
     public static void executeDDL(String sqlString){
-        DruidPooledConnection connection = null;
+        //DruidPooledConnection connection = null;
+        Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            connection = druidDataSource.getConnection();
+            //connection = druidDataSource.getConnection();
+            connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("连接池获取连接异常");
@@ -84,9 +86,12 @@ public class PhoenixUtil {
                 .append(symbolStr)
                 .append(")");
 
-        DruidPooledConnection connection = null;
+        //DruidPooledConnection connection = null;
+        Connection connection = null;
         try {
-            connection = druidDataSource.getConnection();
+            //connection = druidDataSource.getConnection();
+
+            connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("连接池获取连接异常");
