@@ -36,6 +36,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
+        Class.forName(EduConfig.PHOENIX_DRIVER);
         connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
         //druidDataSource = DruidDSUtil.getDruidDataSource();
         // 预加载配置信息

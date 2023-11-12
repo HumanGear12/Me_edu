@@ -21,10 +21,13 @@ public class PhoenixUtil {
         PreparedStatement preparedStatement = null;
         try {
             //connection = druidDataSource.getConnection();
+            Class.forName(EduConfig.PHOENIX_DRIVER);
             connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("连接池获取连接异常");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
 
