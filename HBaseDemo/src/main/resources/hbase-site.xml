@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>192.168.12.122,192.168.12.123,192.168.12.124</value>
+    </property>
+
+</configuration>
