@@ -13,21 +13,19 @@ import java.util.Set;
 
 
 public class PhoenixUtil {
-    //private static DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
+    private static DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
 
     public static void executeDDL(String sqlString){
-        //DruidPooledConnection connection = null;
-        Connection connection = null;
+        DruidPooledConnection connection = null;
+        //Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            //connection = druidDataSource.getConnection();
-            Class.forName(EduConfig.PHOENIX_DRIVER);
-            connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
+            connection = druidDataSource.getConnection();
+            //Class.forName(EduConfig.PHOENIX_DRIVER);
+            //connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("连接池获取连接异常");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
 
 

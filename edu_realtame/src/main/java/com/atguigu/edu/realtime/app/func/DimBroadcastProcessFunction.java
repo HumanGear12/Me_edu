@@ -21,9 +21,9 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
 
 
     // 定义 Druid 连接池对象
-    //DruidDataSource druidDataSource;
+    DruidDataSource druidDataSource;
 
-    private Connection connection;
+    //private Connection connection;
     private MapStateDescriptor<String, DimTableProcess> tableProcessState;
 
     // 定义预加载配置对象
@@ -37,8 +37,8 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
         Class.forName(EduConfig.PHOENIX_DRIVER);
-        connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
-        //druidDataSource = DruidDSUtil.getDruidDataSource();
+        //connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
+        druidDataSource = DruidDSUtil.getDruidDataSource();
         // 预加载配置信息
         Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.12.122:3306/edu_config?" +
                 "user=root&password=000000&useUnicode=true&" +

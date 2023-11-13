@@ -6,6 +6,8 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/edu_realtame/pom.xml" />
+        <option value="$PROJECT_DIR$/PhoenixDemo/pom.xml" />
+        <option value="$PROJECT_DIR$/HBaseDemo/pom.xml" />
       </list>
     </option>
   </component>

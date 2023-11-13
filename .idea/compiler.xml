@@ -7,6 +7,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="HBaseDemo" />
+        <module name="PhoenixDemo" />
         <module name="Me_edu" />
         <module name="edu_realtame" />
       </profile>

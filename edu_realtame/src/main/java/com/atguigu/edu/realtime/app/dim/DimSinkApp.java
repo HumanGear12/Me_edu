@@ -85,13 +85,13 @@ public class DimSinkApp {
 
 
         //对合并后的流进行分别处理
-        //SingleOutputStreamOperator<JSONObject> dimDS =
+        SingleOutputStreamOperator<JSONObject> dimDS =
                 connectCS.process(
                 new DimBroadcastProcessFunction(tableProcessState));
 
         //将数据写入phoenix
 
-        //dimDS.addSink(new DimPhoenixSinkFunc());
+        dimDS.addSink(new DimPhoenixSinkFunc());
 
 
 

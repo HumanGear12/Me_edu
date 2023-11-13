@@ -1,5 +1,7 @@
 package com.atguigu.phoenix;
-mport java.sql.*;
+
+import java.sql.*;
+
 
 /**
  * Created by Smexy on 2023/11/7
@@ -8,7 +10,7 @@ public class ClientDemo
 {
     public static void main(String[] args) throws SQLException {
         // 1.添加链接
-        String url = "jdbc:phoenix:192.168.12.122:2181";
+        String url = "jdbc:phoenix:hadoop122:2181";
         // 2.获取连接
         Connection connection = DriverManager.getConnection(url);
         // 3.编译SQL语句
