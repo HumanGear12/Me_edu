@@ -16,6 +16,8 @@ public class PhoenixUtil {
     private static DruidDataSource druidDataSource = DruidDSUtil.getDruidDataSource();
 
     public static void executeDDL(String sqlString){
+
+        System.out.println("executeDDL........Start");
         DruidPooledConnection connection = null;
         //Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -65,7 +67,9 @@ public class PhoenixUtil {
      * jsonObj 数据对象
      */
     public static void executeDML(String sinkTable, JSONObject jsonObject) {
-        // TODO 2 拼接sql语言
+        System.out.println("executeDML........Start");
+
+        //  拼接sql语言
         StringBuilder sql = new StringBuilder();
         Set<Map.Entry<String, Object>> entries = jsonObject.entrySet();
         ArrayList<String> columns = new ArrayList<>();
@@ -86,13 +90,14 @@ public class PhoenixUtil {
                 .append(")values(")
                 .append(symbolStr)
                 .append(")");
+        System.out.println(sql);
 
-        //DruidPooledConnection connection = null;
-        Connection connection = null;
+        DruidPooledConnection connection = null;
+        //Connection connection = null;
         try {
-            //connection = druidDataSource.getConnection();
+            connection = druidDataSource.getConnection();
 
-            connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
+            //connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             System.out.println("连接池获取连接异常");
@@ -130,6 +135,7 @@ public class PhoenixUtil {
             throwables.printStackTrace();
         }
 
+        System.out.println("executeDML........Done");
     }
 
 

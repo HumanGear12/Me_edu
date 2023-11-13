@@ -55,7 +55,7 @@ public class DimSinkApp {
 
         //4.使用flinkCDC读取配置表数据
         MySqlSource<String> mySqlSource = MySqlSource.<String>builder()
-                .hostname("192.168.12.122")
+                .hostname("hadoop122")
                 .port(3306)
                 .username("root")
                 .password("000000")

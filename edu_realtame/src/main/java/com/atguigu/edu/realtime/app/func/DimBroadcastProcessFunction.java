@@ -36,11 +36,12 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     @Override
     public void open(Configuration parameter) throws Exception {
         super.open(parameter);
-        Class.forName(EduConfig.PHOENIX_DRIVER);
+        //Class.forName(EduConfig.PHOENIX_DRIVER);
         //connection = DriverManager.getConnection(EduConfig.PHOENIX_SERVER);
         druidDataSource = DruidDSUtil.getDruidDataSource();
         // 预加载配置信息
-        Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.12.122:3306/edu_config?" +
+        System.out.println("预加载配置信息");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://hadoop122:3306/edu_config?" +
                 "user=root&password=000000&useUnicode=true&" +
                 "characterEncoding=utf8&serverTimeZone=Asia/Shanghai&useSSL=false");
 
@@ -63,6 +64,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
         rs.close();
         preparedStatement.close();
         conn.close();
+        System.out.println("预加载配置信息Done");
 
     }
 
@@ -70,6 +72,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     @Override
     public void processBroadcastElement(String jsonStr, Context context, Collector<JSONObject> out) throws Exception {
 
+        System.out.println("processBroadcastElement.......Start");
         JSONObject jsonObj = JSON.parseObject(jsonStr);
         BroadcastState<String, DimTableProcess> tableConfigState = context.getBroadcastState(tableProcessState);
         String op = jsonObj.getString("op");
@@ -90,7 +93,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
 
             checkTable(sinkTable, sinkColumns, sinkPk, sinkExtend);
         }
-
+        System.out.println("processBroadcastElement.......Done");
 
     }
 
@@ -98,18 +101,22 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     @Override
     public void processElement(JSONObject jsonObj, BroadcastProcessFunction<JSONObject, String, JSONObject>.ReadOnlyContext readOnlyContext, Collector<JSONObject> collector) throws Exception {
 
+        System.out.println("processElement........Start");
         ReadOnlyBroadcastState<String, DimTableProcess> dimTableProcessState = readOnlyContext.getBroadcastState(tableProcessState);
         // 获取配置信息
+        System.out.println("获取配置信息");
         String sourceTable = jsonObj.getString("table");
         DimTableProcess dimTableProcess = dimTableProcessState.get(sourceTable);
 
         // 如果状态中没有配置信息，从预加载 Map 中加载一次
+        System.out.println("如果状态中没有配置信息，从预加载 Map 中加载一次");
         if (dimTableProcess == null) {
             dimTableProcess = configMap.get(sourceTable);
         }
 
         if (dimTableProcess != null) {
             // 判断操作类型是否为 null，校验数据结构是否完整
+            System.out.println("判断操作类型是否为 null，校验数据结构是否完整");
             String type = jsonObj.getString("type");
             if (type == null) {
                 System.out.println("Maxwell 采集的数据格式异常，缺少操作类型");
@@ -120,15 +127,17 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
                 String sinkColumns = dimTableProcess.getSinkColumns();
 
                 // 根据 sinkColumns 过滤数据
+                System.out.println("根据 sinkColumns 过滤数据");
                 filterColumns(data, sinkColumns);
 
                 // 将目标表名加入到主流数据中
+                System.out.println("将目标表名加入到主流数据中");
                 data.put("sink_table", sinkTable);
 
                 collector.collect(data);
             }
         }
-
+        System.out.println("processElement........Done");
 
     }
 
@@ -138,6 +147,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
 
 
     private void checkTable(String sinkTable, String sinkColumns, String sinkPk, String sinkExtend) {
+        System.out.println("checkTable........Start");
 
         // 封装建表 SQL
         StringBuilder sql = new StringBuilder();
@@ -168,7 +178,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
         String createStatement = sql.toString();
 
         PhoenixUtil.executeDDL(createStatement);
-
+        System.out.println("checkTable........Done");
     }
 
     private void filterColumns(JSONObject data, String sinkColumns) {
