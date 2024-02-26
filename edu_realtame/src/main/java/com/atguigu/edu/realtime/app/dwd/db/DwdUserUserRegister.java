@@ -18,7 +18,7 @@ public class DwdUserUserRegister {
 
         // 3 读取topic_db的数据
         String groupId = "dwd_user_user_register2";
-        KafkaUtil.createTopicDb(tableEnv,groupId);
+        KafkaUtil.createEduDb(tableEnv,groupId);
 
 //        tableEnv.executeSql("select * from topic_db").print();
 

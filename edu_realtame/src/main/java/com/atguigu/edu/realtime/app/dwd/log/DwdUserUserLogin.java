@@ -54,7 +54,10 @@ public class DwdUserUserLogin {
 
 
         //4 添加水位线
-        SingleOutputStreamOperator<JSONObject> withWaterMarkStream = jsonObjStream.assignTimestampsAndWatermarks(WatermarkStrategy.<JSONObject>forBoundedOutOfOrderness(Duration.ofSeconds(5L)).withTimestampAssigner(new SerializableTimestampAssigner<JSONObject>() {
+        SingleOutputStreamOperator<JSONObject> withWaterMarkStream = jsonObjStream
+                .assignTimestampsAndWatermarks(WatermarkStrategy
+                        .<JSONObject>forBoundedOutOfOrderness(Duration.ofSeconds(5L))
+                        .withTimestampAssigner(new SerializableTimestampAssigner<JSONObject>() {
             @Override
             public long extractTimestamp(JSONObject element, long recordTimestamp) {
                 return element.getLong("ts");

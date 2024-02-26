@@ -99,14 +99,14 @@ public class KafkaUtil {
     }
 
 
-    public static void createTopicDb(StreamTableEnvironment tableEnv, String groupId) {
-        tableEnv.executeSql("create table topic_db(" +
+    public static void createEduDb(StreamTableEnvironment tableEnv, String groupId) {
+        tableEnv.executeSql("create table edu_db(" +
                 "`database` string,\n" +
                 "`table` string,\n" +
                 "`type` string,\n" +
                 "`data` map<string, string>,\n" +
                 "`ts` string\n" +
-                ")" + getKafkaDDL("topic_db", groupId));
+                ")" + getKafkaDDL("edu_db", groupId));
     }
 
 

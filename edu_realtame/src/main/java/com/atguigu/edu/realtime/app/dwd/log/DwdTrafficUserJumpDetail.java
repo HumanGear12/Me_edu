@@ -58,8 +58,10 @@ public class DwdTrafficUserJumpDetail {
         });
 
         //  4 添加水位线
-        SingleOutputStreamOperator<JSONObject> withWatermarkStream = jsonObjStream.assignTimestampsAndWatermarks(WatermarkStrategy.<JSONObject>forMonotonousTimestamps()
-                .withTimestampAssigner(new SerializableTimestampAssigner<JSONObject>() {
+        SingleOutputStreamOperator<JSONObject> withWatermarkStream = jsonObjStream
+                .assignTimestampsAndWatermarks(WatermarkStrategy
+                        .<JSONObject>forMonotonousTimestamps()
+                        .withTimestampAssigner(new SerializableTimestampAssigner<JSONObject>() {
                     @Override
                     public long extractTimestamp(JSONObject element, long recordTimestamp) {
                         return element.getLong("ts");
@@ -75,7 +77,9 @@ public class DwdTrafficUserJumpDetail {
         });
 
         //  6 定义cep匹配规则
-        Pattern<JSONObject, JSONObject> pattern = Pattern.<JSONObject>begin("first").where(new IterativeCondition<JSONObject>() {
+        Pattern<JSONObject, JSONObject> pattern = Pattern
+                .<JSONObject>begin("first")
+                .where(new IterativeCondition<JSONObject>() {
             @Override
             public boolean filter(JSONObject jsonObject, Context<JSONObject> ctx) throws Exception {
                 // 一个会话的开头   ->   last_page_id 为空
@@ -98,7 +102,8 @@ public class DwdTrafficUserJumpDetail {
 
         //  8 提取匹配数据和超时数据
         OutputTag<String> timeoutTag = new OutputTag<String>("timeoutTag"){};
-        SingleOutputStreamOperator<String> flatSelectStream = patternStream.flatSelect(timeoutTag, new PatternFlatTimeoutFunction<JSONObject, String>() {
+        SingleOutputStreamOperator<String> flatSelectStream = patternStream
+                .flatSelect(timeoutTag, new PatternFlatTimeoutFunction<JSONObject, String>() {
             @Override
             public void timeout(Map<String, List<JSONObject>> pattern, long timeoutTimestamp, Collector<String> out) throws Exception {
                 JSONObject first = pattern.get("first").get(0);

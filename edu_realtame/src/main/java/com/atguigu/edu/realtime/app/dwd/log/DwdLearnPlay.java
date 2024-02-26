@@ -68,7 +68,8 @@ public class DwdLearnPlay {
         });
 
         // 4 添加水位线
-        SingleOutputStreamOperator<DwdLearnPlayBean> withWatermarkStream = learnBeanStream.assignTimestampsAndWatermarks(WatermarkStrategy.<DwdLearnPlayBean>forBoundedOutOfOrderness(Duration.ofSeconds(5)).withTimestampAssigner(
+        SingleOutputStreamOperator<DwdLearnPlayBean> withWatermarkStream = learnBeanStream.assignTimestampsAndWatermarks(
+                WatermarkStrategy.<DwdLearnPlayBean>forBoundedOutOfOrderness(Duration.ofSeconds(5)).withTimestampAssigner(
                 new SerializableTimestampAssigner<DwdLearnPlayBean>() {
                     @Override
                     public long extractTimestamp(DwdLearnPlayBean element, long recordTimestamp) {
@@ -86,7 +87,8 @@ public class DwdLearnPlay {
         });
 
         // 6 聚合统计
-        WindowedStream<DwdLearnPlayBean, String, TimeWindow> windowStream = keyedStream.window(EventTimeSessionWindows.withGap(Time.seconds(3L)));
+        WindowedStream<DwdLearnPlayBean, String, TimeWindow> windowStream = keyedStream
+                .window(EventTimeSessionWindows.withGap(Time.seconds(3L)));
         SingleOutputStreamOperator<DwdLearnPlayBean> reducedStream = windowStream.reduce(
                 new ReduceFunction<DwdLearnPlayBean>() {
                     @Override

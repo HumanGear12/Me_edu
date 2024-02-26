@@ -20,7 +20,7 @@ public class DwdTradeOrderDetail {
 
         //  3. 从 Kafka 读取业务数据，封装为 Flink SQL 表
         String groupId = "dwd_trade_order_detail";
-        KafkaUtil.createTopicDb(tableEnv, groupId);
+        KafkaUtil.createEduDb(tableEnv, groupId);
 
         //  4. 从 Kafka 读取日志数据，封装为 Flink SQL 表
         tableEnv.executeSql("create table page_log(" +

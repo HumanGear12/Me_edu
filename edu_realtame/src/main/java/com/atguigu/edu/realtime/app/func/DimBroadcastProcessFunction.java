@@ -23,7 +23,7 @@ public class DimBroadcastProcessFunction extends BroadcastProcessFunction<JSONOb
     // 定义 Druid 连接池对象
     DruidDataSource druidDataSource;
 
-    //private Connection connection;
+
     private MapStateDescriptor<String, DimTableProcess> tableProcessState;
 
     // 定义预加载配置对象

@@ -4,10 +4,12 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.edu.realtime.common.EduConfig;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -138,5 +140,57 @@ public class PhoenixUtil {
         System.out.println("executeDML........Done");
     }
 
+
+    /**
+     * Phoenix 表查询方法
+     * conn 数据库连接对象
+     * sql 查询数据的 SQL 语句
+     * clz 返回的集合元素类型的 class 对象
+     * <T> 返回的集合元素类型
+     *  封装为 List<T> 的查询结果
+     */
+
+    public static <T> List<T> queryList(String sql, Class<T> clazz) {
+
+        ArrayList<T> resultList = new ArrayList<>();
+        DruidPooledConnection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = druidDataSource.getConnection();
+            preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            while (resultSet.next()) {
+                T obj = clazz.newInstance();
+                for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object columnValue = resultSet.getObject(i);
+                    BeanUtils.setProperty(obj, columnName, columnValue);
+                }
+                resultList.add(obj);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (preparedStatement !=null){
+            try {
+                preparedStatement.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        if (connection != null){
+            try {
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return  resultList;
+
+    }
 
 }
